@@ -17,13 +17,15 @@ contract dETF is ERC20 {
     uint256 public position1;
     uint256 public position2;
 
+    uint256 public curr_blockNumber;
+
     // for ratio calculation
     uint256 immutable public DECIMALBASE = 1e18;
     uint256 MAX_INT = ~uint256(0);
 
     event investSuc(address indexed user, uint256 indexed etfTokenAmount);
     event redeemSuc(address indexed user, uint256 indexed etfTokenAmount);
-    event reBalanceSuc(uint256 indexed position1, uint256 indexed position2);
+    event reBalanceSuc(uint256 indexed position1, uint256 indexed position2, uint256 indexed curr_blockNumber);
 
     modifier onlyOwner() {
         require(msg.sender == owner, "only owner can call this function");
@@ -45,6 +47,7 @@ contract dETF is ERC20 {
         position1 = positions[0];
         position2 = positions[1];
         owner = msg.sender;
+        curr_blockNumber = block.number;
     }
 
     function setGraphContract(address graphContractAddress) public onlyOwner {
@@ -69,8 +72,8 @@ contract dETF is ERC20 {
         require(balanceOf(msg.sender) > etfAmount, "insufficient fund");
 
         _burn(msg.sender, etfAmount);
-        IERC20(token1).transfer(msg.sender, etfAmount * position1);
-        IERC20(token2).transfer(msg.sender, etfAmount * position2);
+        IERC20(token1).transfer(msg.sender, etfAmount * position1 / DECIMALBASE);
+        IERC20(token2).transfer(msg.sender, etfAmount * position2 / DECIMALBASE);
 
         emit redeemSuc(msg.sender, etfAmount);
     }
@@ -102,10 +105,11 @@ contract dETF is ERC20 {
             IDemoVault(demoVaultContract).swapToken2(halfAmountToSwap, halfAmountToSwap * DECIMALBASE / price);
 
         }
-        position1 = IERC20(token1).balanceOf(address(this)) / etfTotalSupply * DECIMALBASE;
-        position2 = IERC20(token2).balanceOf(address(this)) / etfTotalSupply * DECIMALBASE;
+        position1 = IERC20(token1).balanceOf(address(this)) * DECIMALBASE / etfTotalSupply;
+        position2 = IERC20(token2).balanceOf(address(this)) * DECIMALBASE / etfTotalSupply;
+        curr_blockNumber = block.number;
 
-        emit reBalanceSuc(position1, position2);
+        emit reBalanceSuc(position1, position2, curr_blockNumber);
 
     }
 }
