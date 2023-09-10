@@ -39,7 +39,7 @@ async function main() {
   const dETF = await ethers.getContractFactory("dETF");
   const dETFContract = await dETF.deploy(
       [wbtcAddress, wethAddress],
-      [100, 1000],
+      [19000000000000n, 300000000000000n],
       "dETF Token",
       "dETF"
   );
