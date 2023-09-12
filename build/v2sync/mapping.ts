@@ -49,7 +49,7 @@ export function handleEvents(events: Event[]): Bytes {
     let price0 = calcPrice(lastSyncEvent);
 
     // Set payload to the current price0 when triggering destination contract.
-    let payload = selector_syncCallback.concat(Bytes.fromHexString(price0.toString(16)).padStart(28, 0));
+    let payload = selector_syncCallback.concat(Bytes.fromHexString(price0.toString(16)).padStart(32, 0));
     return Bytes.fromByteArray(payload);
   }
 }

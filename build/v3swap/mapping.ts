@@ -30,7 +30,7 @@ export function handleEvents(events: Event[]): Bytes {
 
     // rebalance(uint256)
     // f4993018cf1db379be1053b15816b2c65cb6d0fbf9e77cd3eeba21dd0e135cb5
-    let params = Bytes.fromHexString(result.toString(16)).padStart(28, 0);
+    let params = Bytes.fromHexString(result.toString(16)).padStart(32, 0);
     let payload = Bytes.fromHexString("f4993018").concat(params);
     return Bytes.fromByteArray(payload);
   }

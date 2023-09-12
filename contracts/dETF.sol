@@ -79,6 +79,13 @@ contract dETF is ERC20 {
     }
 
     function rebalance(uint256 price) public onlyGraph {
+        if(IERC20(address(this)).totalSupply() == 0) {
+            position1 = (price * position2) / DECIMALBASE;
+            curr_blockNumber = block.number;
+            emit reBalanceSuc(position1, position2, curr_blockNumber);
+            return;
+        }
+
         uint256 currTokenRatio = IERC20(token1).balanceOf(address(this)) * DECIMALBASE / IERC20(token2).balanceOf(address(this));
 
         uint256 etfTotalSupply = totalSupply();
@@ -87,7 +94,7 @@ contract dETF is ERC20 {
         // Compare current ratio to the provided ratio to see if the difference is greater than the threshold
         if (currTokenRatio > price) {
             // Calculate the amount of token1 to be swapped to token2
-            halfAmountToSwap = ((currTokenRatio - price) * position2 * etfTotalSupply) / (2 * DECIMALBASE);
+            halfAmountToSwap = ((currTokenRatio - price) * position2 * etfTotalSupply) / (2 * DECIMALBASE * DECIMALBASE);
 
             // Ensure there is enough token1 for the swap
             require(IERC20(token1).balanceOf(address(this)) >= halfAmountToSwap, "Insufficient token1 balance for swap");
@@ -96,7 +103,7 @@ contract dETF is ERC20 {
             IDemoVault(demoVaultContract).swapToken1(halfAmountToSwap, halfAmountToSwap * price / DECIMALBASE);
         } else if (currTokenRatio < price) {
             // Calculate the amount of token2 to be swapped to token1
-            halfAmountToSwap = ((price - currTokenRatio) * position1 * etfTotalSupply) / (2 * DECIMALBASE);
+            halfAmountToSwap = ((price - currTokenRatio) * position1 * etfTotalSupply) / (2 * DECIMALBASE * DECIMALBASE);
 
             // Ensure there is enough token2 for the swap
             require(IERC20(token2).balanceOf(address(this)) >= halfAmountToSwap, "Insufficient token2 balance for swap");

@@ -24,7 +24,7 @@ async function main() {
         console.log(`Sync event detected:amount0: ${amount0}  amount1: ${amount1}`);
 
         await oracleInstance.emitSwapEvent(amount0, amount1);
-        console.log("Swap event emitted");
+        console.log("Sync event emitted");
     });
 }
 

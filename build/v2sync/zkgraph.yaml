@@ -19,4 +19,4 @@ dataDestinations:
   - kind: ethereum/contract
     network: sepolia
     destination:
-      address: "0x4066B35b6b05313DBEC0966e683b2cF227020BE7"
+      address: "0x34dE71Cdc6e4Ddc3Ea0cA6972dd0df90C0314DB6"

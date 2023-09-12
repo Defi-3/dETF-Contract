@@ -48,6 +48,8 @@ async function main() {
 
   console.log(`dETF deployed to: ${dETFAddress}`);
 
+  await dETFContract.setDemoVaultContract(demoVaultAddress);
+
   // Other logic, if needed
 }
 
