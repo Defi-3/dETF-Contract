@@ -14,6 +14,7 @@ contract LotteryManager is IERC721Receiver, ReentrancyGuard {
     using Address for address payable;
 
     struct Lottery {
+        uint256 lotteryId;
         address nftContract;
         uint256 tokenId;
         address sender;
