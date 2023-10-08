@@ -48,7 +48,7 @@ contract Graph is Ownable {
         transferOwnership(tx.origin);
     }
 
-    function depsoit(uint256 amount) external payable {
+    function deposit(uint256 amount) external payable {
         require(amount != 0, "Empty deposit amount");
         if (bountyToken != address(0)) {
             IERC20(bountyToken).safeTransferFrom(msg.sender, address(this), amount);
@@ -76,11 +76,13 @@ contract Graph is Ownable {
         require(verify(blockNumber, blockHash, zkgState, proof, verify_instance, aux), "verify proof failed");
         destAddr.call(zkgState);
 
-        if (bountyToken != address(0)) {
-            IERC20(bountyToken).safeTransfer(msg.sender, bountyReward);
-        } else {
-            (bool _success,) = msg.sender.call{value: bountyReward}("");
-            require(_success, "Failed to reward");
+        if (bountyReward != 0) {
+            if (bountyToken != address(0)) {
+                IERC20(bountyToken).safeTransfer(msg.sender, bountyReward);
+            } else {
+                (bool _success,) = msg.sender.call{value: bountyReward}("");
+                require(_success, "Failed to reward");
+            }
         }
 
         emit Trigger(msg.sender, zkgState);
@@ -145,7 +147,8 @@ contract Graph is Ownable {
                 value := mload(add(zkgState, add(mul(i, 8), 0x20)))
             }
             uint64 shift = 64 - uint64(zkgStateRemain) * 8;
-            encodedPub[i + 6] = uint64(value) >> shift;
+            uint64 data = uint64(value) >> shift << shift;
+            encodedPub[i + 6] = reverseBytes(data);
         }
 
         return encodedPub;
