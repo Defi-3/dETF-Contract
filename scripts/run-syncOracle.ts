@@ -23,7 +23,7 @@ async function main() {
     poolContract.on("Sync", async (amount0, amount1) => {
         console.log(`Sync event detected:amount0: ${amount0}  amount1: ${amount1}`);
 
-        await oracleInstance.emitSwapEvent(amount0, amount1);
+        const result = await oracleInstance.emitSwapEvent(amount0, amount1);
         console.log("Sync event emitted");
     });
 }

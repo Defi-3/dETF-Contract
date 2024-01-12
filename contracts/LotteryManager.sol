@@ -91,6 +91,7 @@ contract LotteryManager is IERC721Receiver, ReentrancyGuard {
         uint256 newLotteryId = _lotteryIds.current();
 
         lotteries[newLotteryId] = Lottery({
+        lotteryId: newLotteryId,
         nftContract: msg.sender,
         tokenId: tokenId,
         sender: from,
